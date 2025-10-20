@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GPU Double Pendulum (Web)</title>
+<style>
+body { background: #111; color: white; text-align: center; margin: 0; }
+canvas { background: black; display: block; margin: auto; }
+h2 { margin-top: 10px; }
+</style>
+</head>
+<body>
+<h2>GPU Double Pendulum (WebSocket Live)</h2>
+<canvas id="canvas" width="800" height="800"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const originX = 400, originY = 150, scale = 250;
+const ws = new WebSocket(`ws://${window.location.host}/ws`);
+
+ws.onmessage = (event) => {
+    const s = JSON.parse(event.data);
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = 'cyan';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(originX, originY);
+    ctx.lineTo(originX + s.x1 * scale, originY + s.y1 * scale);
+    ctx.lineTo(originX + s.x2 * scale, originY + s.y2 * scale);
+    ctx.stroke();
+
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(originX + s.x2 * scale, originY + s.y2 * scale, 6, 0, 2 * Math.PI);
+    ctx.fill();
+};
+</script>
+</body>
+</html>
